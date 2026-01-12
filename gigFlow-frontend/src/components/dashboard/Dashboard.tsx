@@ -22,9 +22,7 @@ const Dashboard = () => {
     return gig.ownerId._id === user?.id;
   });
   const openGigs = myGigs.filter((gig) => gig.status === "open");
-  const assignedGigs = myGigs.filter((gig) => gig.status === "assigned");
 
-  const pendingBids = myBids.filter((bid) => bid.status === "pending");
   const hiredBids = myBids.filter((bid) => bid.status === "hired");
 
   return (
