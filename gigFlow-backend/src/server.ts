@@ -13,6 +13,7 @@ dotenv.config();
 
 const app = express();
 const server = createServer(app);
+app.set("trust proxy", 1);
 
 app.use(
   cors({

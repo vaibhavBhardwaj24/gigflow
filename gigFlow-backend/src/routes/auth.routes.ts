@@ -22,9 +22,10 @@ router.post("/register", async (req: Request, res: Response) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true, // always true in production
       sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/", // avoid path scoping bugs
     });
 
     res.status(201).json({
@@ -59,9 +60,10 @@ router.post("/login", async (req: Request, res: Response) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true, // always true in production
       sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/", // avoid path scoping bugs
     });
 
     res.json({
