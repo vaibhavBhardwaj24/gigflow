@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchGigById } from "../../store/slices/gigSlice";
 import { fetchBidsForGig } from "../../store/slices/bidSlice";
 import BidSubmitForm from "../bids/BidSubmitForm";
 import BidCard from "../bids/BidCard";
+import NotificationToast from "../common/NotificationToast";
 
 const GigDetail = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { currentGig } = useAppSelector((state) => state.gigs);
   const { bids } = useAppSelector((state) => state.bids);
   const { user } = useAppSelector((state) => state.auth);
   const [showBidForm, setShowBidForm] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -25,6 +28,11 @@ const GigDetail = () => {
       dispatch(fetchBidsForGig(currentGig._id));
     }
   }, [currentGig, user, dispatch]);
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
   if (!currentGig) {
     return (
@@ -86,7 +94,10 @@ const GigDetail = () => {
         <div className="mb-8">
           <BidSubmitForm
             gigId={currentGig._id}
-            onSuccess={() => setShowBidForm(false)}
+            onSuccess={() => {
+              showToast("Bid submitted successfully! 🎉");
+              setTimeout(() => navigate("/dashboard"), 1000);
+            }}
           />
         </div>
       )}
@@ -101,11 +112,26 @@ const GigDetail = () => {
           ) : (
             <div className="space-y-4">
               {bids.map((bid) => (
-                <BidCard key={bid._id} bid={bid} isOwner={isOwner} />
+                <BidCard
+                  key={bid._id}
+                  bid={bid}
+                  isOwner={isOwner}
+                  onHireSuccess={() => {
+                    showToast("Freelancer hired successfully! 🎉");
+                    setTimeout(() => navigate("/dashboard"), 1000);
+                  }}
+                />
               ))}
             </div>
           )}
         </div>
+      )}
+
+      {toastMessage && (
+        <NotificationToast
+          message={toastMessage}
+          onClose={() => setToastMessage(null)}
+        />
       )}
     </div>
   );

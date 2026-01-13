@@ -18,9 +18,10 @@ interface Bid {
 interface BidCardProps {
   bid: Bid;
   isOwner: boolean;
+  onHireSuccess?: () => void;
 }
 
-const BidCard = ({ bid, isOwner }: BidCardProps) => {
+const BidCard = ({ bid, isOwner, onHireSuccess }: BidCardProps) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const dispatch = useAppDispatch();
@@ -30,6 +31,10 @@ const BidCard = ({ bid, isOwner }: BidCardProps) => {
     await dispatch(hireBid(bid._id));
     setLoading(false);
     setShowConfirm(false);
+    // Navigate to dashboard on success
+    if (onHireSuccess) {
+      onHireSuccess();
+    }
   };
 
   return (
